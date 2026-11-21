@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MERI KALIBUR PRO</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#050b08;color:#00ff88;
+ font-family:Arial,sans-serif;
+}
+header{
+ padding:22px 15px;text-align:center;
+ background:#07150e;border-bottom:1px solid #00ff6655;
+}
+h1{font-size:25px;margin:0;text-shadow:0 0 15px #00ff88}
+header p{color:#8affb9;font-size:12px}
+nav{display:flex;gap:8px;padding:12px}
+button{
+ background:#092719;color:#00ff88;
+ border:1px solid #00ff7777;border-radius:12px;
+ padding:13px;font-weight:bold;font-size:15px;
+}
+nav button{flex:1}
+button:active{background:#00aa55;color:white}
+.page{display:none;padding:15px}
+.page.active{display:block}
+.panel{
+ background:#091810;border:1px solid #00ff6655;
+ border-radius:16px;padding:15px;margin-bottom:15px;
+}
+h2{font-size:20px}
+.small{color:#8affb9;font-size:13px}
+#chat{
+ height:300px;overflow-y:auto;
+ background:#020805;border-radius:12px;padding:10px;
+}
+.msg{padding:10px;margin:8px 0;border-radius:10px;
+ background:#103421;color:white;overflow-wrap:anywhere}
+.user{background:#075a35;text-align:right}
+.inputrow{display:flex;gap:7px;margin-top:10px}
+input{
+ min-width:0;flex:1;padding:13px;
+ background:#020805;color:#00ff88;
+ border:1px solid #00ff7777;border-radius:10px;
+}
+.inputrow button{padding:10px}
+canvas{
+ display:block;width:100%;max-width:360px;
+ margin:auto;background:#020905;
+ border:2px solid #00ff88;border-radius:12px;
+ touch-action:none;
+}
+.controls{
+ display:grid;grid-template-columns:repeat(3,1fr);
+ gap:9px;max-width:230px;margin:15px auto;
+}
+.controls button{font-size:23px;padding:15px}
+.center{text-align:center}
+.score{font-size:18px;color:white}
+</style>
+</head>
+<body>
+
+<header>
+<h1>⚡ MERI KALIBUR PRO</h1>
+<p>NEON SYSTEM • VERSION 1.0</p>
+</header>
+
+<nav>
+<button onclick="showPage('home')">HOME</button>
+<button onclick="showPage('ai')">AI CHAT</button>
+<button onclick="showPage('game')">GAME</button>
+</nav>
+
+<section id="home" class="page active">
+<div class="panel center">
+<h2>WELCOME TO MERI KALIBUR</h2>
+<p class="small">Your personal digital world</p>
+<h1>🟢 SYSTEM ONLINE</h1>
+</div>
+<div class="panel">
+<h2>🤖 MERI AI</h2>
+<p>Sun'iy intellekt suhbat bo'limi.</p>
+<button onclick="showPage('ai')">CHATNI OCHISH</button>
+</div>
+<div class="panel">
+<h2>🎮 SNAKE PRO</h2>
+<p>Rekord o'rnat va yangi ball yig'!</p>
+<button onclick="showPage('game')">O'YINNI BOSHLASH</button>
+</div>
+</section>
+
+<section id="ai" class="page">
+<div class="panel">
+<h2>🤖 MERI KALIBUR AI</h2>
+<div id="chat">
+<div class="msg">MERI: Salom! Men MERI KALIBUR yordamchisiman.</div>
+</div>
+<div class="inputrow">
+<input id="question" placeholder="Xabar yoz...">
+<button onclick="sendMsg()">SEND</button>
+</div>
+<p class="small">Hozircha demo suhbat. Haqiqiy AI uchun server ulanishi kerak.</p>
+</div>
+</section>
+
+<section id="game" class="page">
+<div class="panel center">
+<h2>🐍 SNAKE PRO</h2>
+<div class="score">BALL: <span id="score">0</span></div>
+<div class="score">REKORD: <span id="best">0</span></div>
+<br>
+<canvas id="board" width="320" height="320"></canvas>
+<div class="controls">
+<div></div><button onclick="turn(0,-1)">⬆️</button><div></div>
+<button onclick="turn(-1,0)">⬅️</button>
+<button onclick="startGame()">▶️</button>
+<button onclick="turn(1,0)">➡️</button>
+<div></div><button onclick="turn(0,1)">⬇️</button><div></div>
+</div>
+<button onclick="startGame()">🔄 QAYTA BOSHLASH</button>
+<p class="small">Yashil olmani yig'ib, rekordni yangila!</p>
+</div>
+</section>
+
+<script>
+function showPage(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+}
+
+function sendMsg(){
+ let input=document.getElementById('question');
+ let q=input.value.trim();
+ if(!q)return;
+ addMsg(q,'user');
+ input.value='';
+ let answer='Savolingni tushundim! Men hozir demo rejimdaman. Haqiqiy AI javobi uchun server ulanishi kerak.';
+ let s=q.toLowerCase();
+ if(s.includes('salom'))answer='Salom! MERI KALIBUR PRO tizimiga xush kelibsiz!';
+ else if(s.includes('ism'))answer='Mening ismim MERI KALIBUR AI.';
+ else if(s.includes('oyin'))answer='GAME bo‘limida Snake PRO o‘yinini o‘ynashing mumkin!';
+ else if(s.includes('rahmat'))answer='Marhamat! Yana yordam kerak bo‘lsa, yozing.';
+ setTimeout(()=>addMsg(answer,'bot'),300);
+}
+function addMsg(t,type){
+ let el=document.createElement('div');
+ el.className='msg '+(type==='user'?'user':'');
+ el.textContent=(type==='user'?'SIZ: ':'MERI: ')+t;
+ let chat=document.getElementById('chat');
+ chat.appendChild(el);
+ chat.scrollTop=chat.scrollHeight;
+}
+
+const canvas=document.getElementById('board');
+const ctx=canvas.getContext('2d');
+const size=16;
+let snake,food,dx,dy,score,timer,playing=false;
+let best=Number(localStorage.getItem('meriBest')||0);
+document.getElementById('best').textContent=best;
+
+function reset(){
+ snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];
+ dx=1;dy=0;score=0;
+ food={x:5,y:5};
+ document.getElementById('score').textContent=score;
+ draw();
+}
+function draw(){
+ ctx.fillStyle='#020905';
+ ctx.fillRect(0,0,320,320);
+ ctx.fillStyle='#00ff88';
+ snake.forEach((p,i)=>{
+  ctx.shadowBlur=12;ctx.shadowColor='#00ff88';
+  ctx.fillRect(p.x*size+1,p.y*size+1,14,14);
+ });
+ ctx.shadowBlur=0;
+ ctx.fillStyle='#ffdf00';
+ ctx.beginPath();
+ ctx.arc(food.x*size+8,food.y*size+8,7,0,Math.PI*2);
+ ctx.fill();
+}
+function turn(x,y){
+ if(x===-dx&&y===-dy)return;
+ if(playing){dx=x;dy=y;}
+}
+function endGame(){
+ playing=false;
+ clearInterval(timer);
+ alert('O‘YIN TUGADI! Ball: '+score);
+}
+function tick(){
+ let head={x:snake[0].x+dx,y:snake[0].y+dy};
+ if(head.x<0||head.y<0||head.x>=20||head.y>=20||
+ snake.some(p=>p.x===head.x&&p.y===head.y)){
+  endGame();return;
+ }
+ snake.unshift(head);
+ if(head.x===food.x&&head.y===food.y){
+  score+=10;
+  document.getElementById('score').textContent=score;
+  if(score>best){
+   best=score;
+   localStorage.setItem('meriBest',best);
+   document.getElementById('best').textContent=best;
+  }
+  food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)};
+ }else snake.pop();
+ draw();
+}
+function startGame(){
+ clearInterval(timer);
+ reset();
+ playing=true;
+ timer=setInterval(tick,135);
+}
+document.addEventListener('keydown',e=>{
+ if(e.key==='ArrowUp')turn(0,-1);
+ if(e.key==='ArrowDown')turn(0,1);
+ if(e.key==='ArrowLeft')turn(-1,0);
+ if(e.key==='ArrowRight')turn(1,0);
+});
+reset();
+</script>
+</body>
+</html>
